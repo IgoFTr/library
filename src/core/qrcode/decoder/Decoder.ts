@@ -85,7 +85,6 @@ export default class Decoder {
     } catch (e/*: FormatException, ChecksumException*/) {
       ex = e;
     }
-
     try {
 
       // Revert the bit matrix
@@ -96,7 +95,6 @@ export default class Decoder {
 
       // Preemptively read the version.
       parser.readVersion();
-
       // Preemptively read the format information.
       parser.readFormatInformation();
 
@@ -108,7 +106,6 @@ export default class Decoder {
        */
       // Prepare for a mirrored reading.
       parser.mirror();
-
       const result = this.decodeBitMatrixParser(parser, hints);
 
       // Success! Notify the caller that the code was mirrored.
@@ -129,7 +126,6 @@ export default class Decoder {
   private decodeBitMatrixParser(parser: BitMatrixParser, hints: Map<DecodeHintType, any>): DecoderResult {
     const version = parser.readVersion();
     const ecLevel = parser.readFormatInformation().getErrorCorrectionLevel();
-
     // Read codewords
     const codewords = parser.readCodewords();
     // Separate into data blocks
@@ -142,7 +138,6 @@ export default class Decoder {
     }
     const resultBytes = new Uint8Array(totalBytes);
     let resultOffset = 0;
-
     // Error-correct and copy data blocks together into a stream of bytes
     for (const dataBlock of dataBlocks) {
       const codewordBytes = dataBlock.getCodewords();
@@ -152,7 +147,6 @@ export default class Decoder {
         resultBytes[resultOffset++] = codewordBytes[i];
       }
     }
-
     // Decode the contents of that stream of bytes
     return DecodedBitStreamParser.decode(resultBytes, version, ecLevel, hints);
   }

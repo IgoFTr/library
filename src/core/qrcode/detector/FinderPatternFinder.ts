@@ -43,7 +43,6 @@ import { float } from '../../../customTypings';
  * @author Sean Owen
  */
 export default class FinderPatternFinder {
-
     private static CENTER_QUORUM = 2;
     protected static MIN_SKIP = 3; // 1 pixel/module times 3 modules/center
     protected static MAX_MODULES = 57; // support up to version 10 for mobile clients
@@ -662,7 +661,6 @@ export default class FinderPatternFinder {
 
             possibleCenters.splice(3); // this is not realy necessary as we only return first 3 anyway
         }
-
         return [
             possibleCenters[0],
             possibleCenters[1],

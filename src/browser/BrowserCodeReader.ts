@@ -12,6 +12,19 @@ import { HTMLCanvasElementLuminanceSource } from './HTMLCanvasElementLuminanceSo
 import { HTMLVisualMediaElement } from './HTMLVisualMediaElement';
 import { VideoInputDevice } from './VideoInputDevice';
 
+
+function logTime(label: string) {
+  const uniqueLabel = `${label}-${Date.now()}`;
+  console.time(uniqueLabel);
+  return {
+    endLog: (silent: boolean = false) => {
+      if (silent) {
+      } else {
+        console.timeEnd(uniqueLabel);
+      }
+    }
+  };
+}
 /**
  * @deprecated Moving to @zxing/browser
  *
@@ -851,11 +864,14 @@ export class BrowserCodeReader {
         this._stopAsyncDecode = undefined;
         return;
       }
+      const timer = logTime('DECODER',); // Ajuste o segundo parâmetro conforme necessário
 
       try {
         const result = this.decode(element);
+        timer.endLog(false);
         resolve(result);
       } catch (e) {
+        timer.endLog(true);
         const ifNotFound = retryIfNotFound && e instanceof NotFoundException;
         const isChecksumOrFormatError =
           e instanceof ChecksumException || e instanceof FormatException;

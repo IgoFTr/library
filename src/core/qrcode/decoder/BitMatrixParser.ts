@@ -97,7 +97,6 @@ export default class BitMatrixParser {
      * the valid encoding of version information
      */
     public readVersion(): Version /*throws FormatException*/ {
-
         if (this.parsedVersion !== null && this.parsedVersion !== undefined) {
             return this.parsedVersion;
         }
