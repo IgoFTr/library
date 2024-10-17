@@ -12,6 +12,7 @@ export class BrowserQRCodeReader extends BrowserCodeReader {
      * @param {number} [timeBetweenScansMillis=500] the time delay between subsequent decode tries
      */
     public constructor(timeBetweenScansMillis: number = 500) {
+        console.log('teste');
         super(new QRCodeReader(), timeBetweenScansMillis);
     }
 }
