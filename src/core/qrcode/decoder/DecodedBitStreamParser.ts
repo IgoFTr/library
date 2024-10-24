@@ -44,7 +44,6 @@ import Version from './Version';
  * @author Sean Owen
  */
 export default class DecodedBitStreamParser {
-
   /**
    * See ISO 18004:2006, 6.4.4 Table 5
    */
@@ -55,7 +54,10 @@ export default class DecodedBitStreamParser {
   public static decode(bytes: Uint8Array,
     version: Version,
     ecLevel: ErrorCorrectionLevel,
-    hints: Map<DecodeHintType, any>): DecoderResult /*throws FormatException*/ {
+    hints: Map<DecodeHintType, any>,
+    startError: number,
+    endError: number): DecoderResult /*throws FormatException*/ {
+    const start = Date.now();
     const bits = new BitSource(bytes);
     let result = new StringBuilder();
     const byteSegments = new Array<Uint8Array>(); // 1
@@ -137,13 +139,13 @@ export default class DecodedBitStreamParser {
       // from readBits() calls
       throw new FormatException();
     }
-
     return new DecoderResult(bytes,
       result.toString(),
       byteSegments.length === 0 ? null : byteSegments,
       ecLevel === null ? null : ecLevel.toString(),
       symbolSequence,
-      parityData);
+      parityData,
+      [startError, endError, start, Date.now()]);
   }
 
   /**

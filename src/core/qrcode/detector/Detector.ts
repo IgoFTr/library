@@ -75,8 +75,7 @@ export default class Detector {
    * @throws NotFoundException if QR Code cannot be found
    * @throws FormatException if a QR Code cannot be decoded
    */
-  public detect(hints: Map<DecodeHintType, any>): DetectorResult /*throws NotFoundException, FormatException*/ {
-
+  public detect(hints: Map<DecodeHintType, any>): DetectorResult /*throws NotFoundException, FormatException*/ {  
     this.resultPointCallback = (hints === null || hints === undefined) ? null :
         /*(ResultPointCallback) */hints.get(DecodeHintType.NEED_RESULT_POINT_CALLBACK);
 
@@ -87,6 +86,7 @@ export default class Detector {
   }
 
   protected processFinderPatternInfo(info: FinderPatternInfo): DetectorResult {
+    const start = Date.now();
 
     const topLeft: FinderPattern = info.getTopLeft();
     const topRight: FinderPattern = info.getTopRight();
@@ -143,7 +143,7 @@ export default class Detector {
     } else {
       points = [bottomLeft, topLeft, topRight, alignmentPattern];
     }
-    return new DetectorResult(bits, points);
+    return new DetectorResult(bits, points,[start, Date.now()]);
   }
 
   private static createTransform(topLeft: ResultPoint,

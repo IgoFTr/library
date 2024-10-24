@@ -48,12 +48,15 @@ export default class Result {
     //        resultPoints, format, timestamp)
     // }
 
-    public constructor(private text: string,
-      private rawBytes: Uint8Array,
-      private numBits: number /*int*/ = rawBytes == null ? 0 : 8 * rawBytes.length,
-      private resultPoints: ResultPoint[],
-      private format: BarcodeFormat,
-      private timestamp: number /*long*/ = System.currentTimeMillis()) {
+    public constructor(
+        private text: string,
+        private rawBytes: Uint8Array,
+        private numBits: number = rawBytes == null ? 0 : 8 * rawBytes.length,
+        private resultPoints: ResultPoint[],
+        private format: BarcodeFormat,
+        private timestamp: number = System.currentTimeMillis(),
+        private decodeTime: number[] = [] // Alterado para array de números
+    ) {
         this.text = text;
         this.rawBytes = rawBytes;
         if (undefined === numBits || null === numBits) {
@@ -69,8 +72,8 @@ export default class Result {
         } else {
             this.timestamp = timestamp;
         }
+        this.decodeTime = decodeTime;
     }
-
     /**
      * @return raw text encoded by the barcode
      */
@@ -117,6 +120,15 @@ export default class Result {
     public getResultMetadata(): Map<ResultMetadataType, Object> {
         return this.resultMetadata;
     }
+
+    public addDecodeTime(time: number): void {
+        this.decodeTime.push(time);
+    }
+    
+    public getDecodeTimes(): number[] {
+        return this.decodeTime;
+    }
+
 
     public putMetadata(type: ResultMetadataType, value: Object): void {
         if (this.resultMetadata === null) {

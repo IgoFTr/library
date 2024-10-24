@@ -76,7 +76,6 @@ export default class Decoder {
    * @throws ChecksumException if error correction fails
    */
   public decodeBitMatrix(bits: BitMatrix, hints?: Map<DecodeHintType, any>): DecoderResult {
-
     // Construct a parser and read version, error-correction level
     const parser = new BitMatrixParser(bits);
     let ex = null;
@@ -138,7 +137,9 @@ export default class Decoder {
     }
     const resultBytes = new Uint8Array(totalBytes);
     let resultOffset = 0;
+    const start = Date.now();
     // Error-correct and copy data blocks together into a stream of bytes
+
     for (const dataBlock of dataBlocks) {
       const codewordBytes = dataBlock.getCodewords();
       const numDataCodewords = dataBlock.getNumDataCodewords();
@@ -147,8 +148,10 @@ export default class Decoder {
         resultBytes[resultOffset++] = codewordBytes[i];
       }
     }
+    const end = Date.now();
+
     // Decode the contents of that stream of bytes
-    return DecodedBitStreamParser.decode(resultBytes, version, ecLevel, hints);
+    return DecodedBitStreamParser.decode(resultBytes, version, ecLevel, hints, start, end);
   }
 
   /**

@@ -65,8 +65,10 @@ export default class QRCodeReader implements Reader {
 
   /*@Override*/
   public decode(image: BinaryBitmap, hints?: Map<DecodeHintType, any>): Result {
+    const start = Date.now();
     let decoderResult: DecoderResult;
     let points: Array<ResultPoint>;
+    let detectorTime: number[] = [];
     if (hints !== undefined && hints !== null && undefined !== hints.get(DecodeHintType.PURE_BARCODE)) {
       const bits = QRCodeReader.extractPureBits(image.getBlackMatrix());
       decoderResult = this.decoder.decodeBitMatrix(bits, hints);
@@ -75,14 +77,30 @@ export default class QRCodeReader implements Reader {
       const detectorResult = new Detector(image.getBlackMatrix()).detect(hints);
       decoderResult = this.decoder.decodeBitMatrix(detectorResult.getBits(), hints);
       points = detectorResult.getPoints();
+      detectorTime = detectorResult.getTime();
     }
-
+    
     // If the code was mirrored: swap the bottom-left and the top-right points.
     if (decoderResult.getOther() instanceof QRCodeDecoderMetaData) {
       (<QRCodeDecoderMetaData>decoderResult.getOther()).applyMirroredCorrection(points);
     }
-
-    const result = new Result(decoderResult.getText(), decoderResult.getRawBytes(), undefined, points, BarcodeFormat.QR_CODE, undefined);
+    const times = decoderResult.getDecoderTime();
+    const safeTimes = [
+      detectorTime[0] !== undefined ? detectorTime[0] : 0,
+      detectorTime[1] !== undefined ? detectorTime[1] : 0,
+      times[0] !== undefined ? times[0] : 0,
+      times[1] !== undefined ? times[1] : 0,
+      times[2] !== undefined ? times[2] : 0,
+      times[3] !== undefined ? times[3] : 0,
+  ];
+    const result = new Result(
+      decoderResult.getText(), 
+      decoderResult.getRawBytes(), 
+      undefined, 
+      points, 
+      BarcodeFormat.QR_CODE, 
+      undefined, 
+      [start, safeTimes[0], safeTimes[1],safeTimes[2], safeTimes[3], safeTimes[4],safeTimes[5], Date.now()]);
     const byteSegments: Array<Uint8Array> = decoderResult.getByteSegments();
     if (byteSegments !== null) {
       result.putMetadata(ResultMetadataType.BYTE_SEGMENTS, byteSegments);

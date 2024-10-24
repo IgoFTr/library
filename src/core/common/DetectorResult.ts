@@ -30,10 +30,12 @@ export default class DetectorResult {
 
     private bits: BitMatrix;
     private points: Array<ResultPoint>;
+    private detectorTime: number[]=[];
 
-    public constructor(bits: BitMatrix, points: Array<ResultPoint>) {
+    public constructor(bits: BitMatrix, points: Array<ResultPoint>, detectorTime: number[]) {
         this.bits = bits;
         this.points = points;
+        this.detectorTime = detectorTime;
     }
 
     public getBits(): BitMatrix {
@@ -44,4 +46,10 @@ export default class DetectorResult {
         return this.points;
     }
 
+    public getTime(): number[] {
+        return this.detectorTime;
+    }
+    public addDetectorTime(time: number): void {
+        this.detectorTime.push(time);
+    }
 }

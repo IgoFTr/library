@@ -44,7 +44,9 @@ export default class DecoderResult {
         private byteSegments: Uint8Array[],
         private ecLevel: string,
         private structuredAppendSequenceNumber: number /*int*/ = -1,
-        private structuredAppendParity: number /*int*/ = -1) {
+        private structuredAppendParity: number /*int*/ = -1,
+        private decoderTime: number[] = []/*long*/ 
+    ) {
         this.numBits = (rawBytes === undefined || rawBytes === null) ? 0 : 8 * rawBytes.length;
     }
 
@@ -62,7 +64,14 @@ export default class DecoderResult {
     public getNumBits(): number /*int*/ {
         return this.numBits;
     }
-
+    
+    public getDecoderTime(): number[] /*int*/ {
+        return this.decoderTime;
+    }
+    public addDecodeTime(time: number): void {
+        this.decoderTime.push(time);
+    }
+    
     /**
      * @param numBits overrides the number of bits that are valid in {@link #getRawBytes()}
      * @since 3.3.0
